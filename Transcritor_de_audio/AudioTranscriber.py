@@ -1,6 +1,9 @@
 from tkinter import *
 from PIL import Image, ImageTk
 import speech_recognition as sr
+from tkinter.filedialog import *
+from tkinter import messagebox
+from os import rename
 
 # Cores
 Colorfont = '#282828'
@@ -30,11 +33,19 @@ imageRecorded = imageRecorded.resize((50,50))
 imageRecorded = ImageTk.PhotoImage(imageRecorded)
 
 def recorder():
+        global source, texto
+
+        # Criando funções dos botões lado direito
         def reset():
              showText.destroy()
              reset_button.destroy()
+        def copy():
+            global texto
+            texto = showText['text']
+            app.clipboard_append(texto)
 
-        global source
+
+        # Capturando fala, passando por bloco de try except finally e mostrando na janela
         if micOn:
             r = sr.Recognizer()
             with sr.Microphone() as source:
@@ -48,9 +59,16 @@ def recorder():
                 showText.place(x=20, y=200)
 
             finally:
-                 reset_button = Button(app, command=reset ,text='Reset' ,width=7, height=1, anchor='center', font=('Arial 9 bold'), bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
-                 reset_button.place(x=370, y=200)
-            
+                # Criando botões de opções
+                reset_button = Button(app, command=reset ,text='Reset' ,width=7, height=1, anchor='center', font=('Arial 9 bold'), bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
+                reset_button.place(x=370, y=200)
+
+                copy_button = Button(app, command=copy ,text='Copy', width=7, height=1, anchor='center', font=('Arial 9 bold'),  bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
+                copy_button.place(x=370, y=229)
+
+                download_button = Button(app, text='Download', width=7, height=1, anchor='center', font=('Arial 9 bold'),  bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
+                download_button.place(x=370, y=258)
+                 
 
 def changeMic():
     global micOn, source, recorded_button
