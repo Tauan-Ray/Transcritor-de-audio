@@ -32,6 +32,8 @@ imageRecorded = Image.open('Transcritor_de_audio/images/recorded.png')
 imageRecorded = imageRecorded.resize((50,50))
 imageRecorded = ImageTk.PhotoImage(imageRecorded)
 
+
+# Função para começar a captar voz e criação de butões de opções
 def recorder():
         global source, texto
 
@@ -39,10 +41,17 @@ def recorder():
         def reset():
              showText.destroy()
              reset_button.destroy()
+             copy_button.destroy()
+             download_button.destroy()
         def copy():
             global texto
             texto = showText['text']
             app.clipboard_append(texto)
+        def download():
+            textSave = asksaveasfilename(defaultextension='.txt')
+            if textSave:
+                with open(textSave, 'w') as file:
+                    file.write(showText)
 
 
         # Capturando fala, passando por bloco de try except finally e mostrando na janela
@@ -54,11 +63,7 @@ def recorder():
                 text = r.recognize_google(audio, language='pt-BR')
                 showText = Label(app, text=text, font=('Arial 9') ,bg=Colorbackground, fg=Colorfont, wraplength=320)
                 showText.place(x=20, y=200)
-            except:
-                showText = Label(app, text='Microfone não ok', font=('Arial 9') ,bg=Colorbackground, fg=Colorfont, relief='solid' ,borderwidth=1)
-                showText.place(x=20, y=200)
-
-            finally:
+                
                 # Criando botões de opções
                 reset_button = Button(app, command=reset ,text='Reset' ,width=7, height=1, anchor='center', font=('Arial 9 bold'), bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
                 reset_button.place(x=370, y=200)
@@ -66,10 +71,13 @@ def recorder():
                 copy_button = Button(app, command=copy ,text='Copy', width=7, height=1, anchor='center', font=('Arial 9 bold'),  bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
                 copy_button.place(x=370, y=229)
 
-                download_button = Button(app, text='Download', width=7, height=1, anchor='center', font=('Arial 9 bold'),  bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
+                download_button = Button(app, command=download ,text='Download', width=7, height=1, anchor='center', font=('Arial 9 bold'),  bg=ColorButton, fg=Colorfont, relief='raised', overrelief='sunken')
                 download_button.place(x=370, y=258)
-                 
+            except:
+                messagebox.showerror('Error',
+                                     'O microfone não está ok')
 
+# Função para ligar o microfone
 def changeMic():
     global micOn, source, recorded_button
     if micOn == False:
